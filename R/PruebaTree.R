@@ -1,17 +1,29 @@
 library(rpart)
 library(tidyverse)
 library(caret)
+library(rpart.plot)
 
 folder <-  dirname(rstudioapi::getSourceEditorContext()$path )
-box_test <-read_csv(paste0(folder,"/dataset_ambiente.csv"))
+datos <-read_csv(paste0(folder,"/dataset_ambiente.csv"))
 
 
-head(box_test)
 
-dummy <- dummyVars(" ~ AMBIENTE",data = AMBIENTE.box_test)
+head(datos)
+
+dummy <- dummyVars(" ~ AMBIENTE",data = datos)
+
+ # Ajuste de los datos
+datos$ROJO <- as.numeric(as.character(datos$ROJO))  # Convertir a numérico la columna ROJO
+datos$VERDE <- as.numeric(as.character(datos$VERDE))  # Convertir a numérico la columna VERDE
+datos$AZUL <- as.numeric(as.character(datos$AZUL))  # Convertir a numérico la columna AZUL
+datos$TEMP <- as.numeric(as.character(datos$TEMP))  # Convertir a numérico la columna TEMPERATURA
+datos$HUME <- as.numeric(as.character(datos$HUME))  # Convertir a numérico la columna HUME
+datos$PT100 <- as.numeric(as.character(datos$PT100))  # Convertir a numérico la columna PT100
+
+datos_entrenamiento <- sample_frac(datos, .7)
 
 fit <- rpart(
-  AMBIENTE ~ ROJO + VERDE + AZUL,
+  AMBIENTE~ROJO + VERDE + AZUL,
   method = "anova",
   data = box_test
 )
