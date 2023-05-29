@@ -1,9 +1,10 @@
 library(tidyverse)
 library(caret)
 
+
 folder <-  dirname(rstudioapi::getSourceEditorContext()$path )
 dataset <-read_csv(paste0(folder,"/Dataset_ambiente.csv"))
-datasetcopia <-read_csv(paste0(folder,"/Dataset_ambiente2.csv"))
+datasetcopia <-read_csv(paste0(folder,"/Dataset_ambiente_prueba.csv"))
 
 fit <- rpart(AMBIENTE ~ ROJO+VERDE+AZUL+TEMP+HUME+PT100
              ,method = "class"

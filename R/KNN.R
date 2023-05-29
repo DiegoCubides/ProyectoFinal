@@ -1,9 +1,12 @@
 library(tidyverse)
 library(caret)
+normalise <- function(x){
+  return((x-min(x))/(max(x)-min(x)))
+}
 
 folder <-  dirname(rstudioapi::getSourceEditorContext()$path )
 dataset <-read_csv(paste0(folder,"/Dataset_ambiente.csv"))
-datasetcopia <-read_csv(paste0(folder,"/Dataset_ambiente2.csv"))
+datasetcopia <-read_csv(paste0(folder,"/Dataset_ambiente_prueba.csv"))
 head(dataset)
 hist(dataset$ROJO,breaks= 10)
 hist(dataset$VERDE,breaks= 10)
@@ -15,6 +18,7 @@ kable(summary(dataset))
 
 dataset$AMBIENTE <-as.factor(dataset$AMBIENTE)
 datasetcopia$AMBIENTE <- as.factor(datasetcopia$AMBIENTE)
+
 
 plot(dataset[1:5]
      ,pch=21,bg=c("green","blue3","yellow")[unclass(dataset$AMBIENTE)])
