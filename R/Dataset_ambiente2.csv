@@ -1,0 +1,13 @@
+ROJO,VERDE,AZUL,TEMP,HUME,PT100,AMBIENTE
+17,22,21,41,33,501,desierto
+12,15,15,50,20,494,desierto
+19,18,14,49,20,500,invierno
+18,18,8,32,27,494,invierno
+47,51,86,32,27,504,tropico
+54,61,83,26,44,503,tropico
+16,22,21,26,44,500,desierto
+11,15,14,46,24,501,desierto
+22,21,18,36,24,487,invierno
+18,15,14,30,27,505,invierno
+54,61,88,28,38,492,tropico
+51,57,84,26,45,497,tropico
