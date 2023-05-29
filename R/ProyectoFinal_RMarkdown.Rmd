@@ -177,6 +177,7 @@ Para visualizar los resultados, se genera la matriz de confusión. Esta matriz p
 ```{r include=TRUE,echo=TRUE,eval=TRUE}
 Knnpredict <- predict(Knnfit,newdata = test.data)
 confusionMatrix(Knnpredict,test.data$AMBIENTE)
+
 ```
 
 ### ARBOL DE DESICION
@@ -212,4 +213,5 @@ fit.rf <- randomForest(AMBIENTE ~ ROJO  +VERDE + AZUL + TEMP + HUME +
                          PT100, data = training.data)
 prediction.rf <- predict(fit.rf, datasetcopia)
 table(datasetcopia$AMBIENTE,prediction.rf)
+>>>>>>> d42074d7d861cf442320184b253e80a59d2bf6f1
 ```
