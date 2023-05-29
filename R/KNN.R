@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 library(tidyverse)
 library(caret)
 normalise <- function(x){
@@ -8,7 +8,7 @@ normalise <- function(x){
 folder <-  dirname(rstudioapi::getSourceEditorContext()$path )
 dataset <-read_csv(paste0(folder,"/Dataset_ambiente.csv"))
 datasetcopia <-read_csv(paste0(folder,"/Dataset_ambiente_prueba.csv"))
-=======
+
 brary(tidyverse)#paquetes útiles para el análisis y manipulación de datos
 library(caret)#paquetes útiles para el análisis y manipulación de datos
 
@@ -16,7 +16,7 @@ folder <-  dirname(rstudioapi::getSourceEditorContext()$path )#Se guarda la ruta
 dataset <-read_csv(paste0(folder,"/Dataset_ambiente.csv"))#Se leen dos conjuntos de datos desde archivos CSV utilizando la función read_csv() d
 datasetcopia <-read_csv(paste0(folder,"/Dataset_ambiente2.csv"))
 #Se muestran las primeras filas del conjunto de datos dataset utilizando la función head(). Luego se generan histogramas para las variables ROJO, VERDE, AZUL, TEMP, HUME y PT100 utilizando la función hist().
->>>>>>> 3418fc93d44afcfa6b46d84014e6226ffb10b2b1
+
 head(dataset)
 hist(dataset$ROJO,breaks= 10)
 hist(dataset$VERDE,breaks= 10)
@@ -29,12 +29,8 @@ kable(summary(dataset))#Se genera un resumen estadístico del conjunto de datos 
 dataset$AMBIENTE <-as.factor(dataset$AMBIENTE)
 datasetcopia$AMBIENTE <- as.factor(datasetcopia$AMBIENTE)
 
-<<<<<<< HEAD
-
-plot(dataset[1:5]
-=======
 plot(dataset[1:5]#Se genera un diagrama de dispersión utilizando las primeras 5 columnas del conjunto de datos dataset. Cada punto en el diagrama de dispersión está marcado con un símbolo (pch) y un color de fondo (bg) determinados por la variable categórica AMBIENTE.
->>>>>>> 3418fc93d44afcfa6b46d84014e6226ffb10b2b1
+
      ,pch=21,bg=c("green","blue3","yellow")[unclass(dataset$AMBIENTE)])
 
 sample.index <- sample(1:nrow(dataset)#Se crea un vector sample.index que contiene una muestra aleatoria de índices de filas del conjunto de datos dataset. El tamaño de la muestra es el 70% del número total de filas del conjunto de datos.
