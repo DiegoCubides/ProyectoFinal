@@ -14,6 +14,8 @@ library(randomForest)
 folder <-  dirname(rstudioapi::getSourceEditorContext()$path )
 dataset <-read_csv(paste0(folder,"/Dataset_ambiente.csv"))
 datasetcopia <-read_csv(paste0(folder,"/Dataset_ambiente_prueba.csv"))
+dataset$AMBIENTE <-as.factor(dataset$AMBIENTE)
+datasetcopia$AMBIENTE <- as.factor(datasetcopia$AMBIENTE)
 
 ```
 
@@ -90,8 +92,6 @@ Para la adquisición de datos en tiempo real, se empleó el programa PLX-DAQ, el
 
 ### Entrenamiento e implementacion de los modelos
 
-
-
 Se lleva a cabo el análisis exploratorio de datos para cada una de las variables con el objetivo de examinar su comportamiento. Para este propósito, se utiliza la función hist para generar el histograma correspondiente. El análisis exploratorio de datos nos brinda una comprensión inicial de la distribución y características de las variables, lo que nos permite identificar posibles patrones, tendencias o anomalías en los datos. Este proceso es fundamental para obtener información relevante y realizar futuros análisis y modelos basados en los datos disponibles.
 
 ```{r include=TRUE,echo=TRUE,eval=F}
@@ -118,6 +118,7 @@ kable(summary(dataset))
 ```
 
 Se convierten las columnas AMBIENTE en factores utilizando la función as.factor(). Esto es útil cuando se trabaja con variables categóricas en modelos de aprendizaje automático.
+
 ```{r include=TRUE,echo=TRUE,eval=F}
 dataset$AMBIENTE <-as.factor(dataset$AMBIENTE)
 datasetcopia$AMBIENTE <- as.factor(datasetcopia$AMBIENTE)
@@ -131,3 +132,47 @@ plot(dataset[1:5]
      ,pch=21,bg=c("green","blue3","yellow")[unclass(dataset$AMBIENTE)])
 ```
 
+-   Knn method
+
+Se utiliza Cross-Validation para dividir los datos en un 70% de entrenamiento y un 30% de prueba. Las variables predictoras incluyen los datos del sensor de color (ROJO, VERDE, AZUL) y los sensores de humedad y temperatura. Esto permite evaluar el rendimiento del modelo en datos no vistos y predecir diferentes ambientes.
+
+```{r include=TRUE,echo=T,eval=T}
+sample.index <- sample(1:nrow(dataset)
+                       ,nrow(dataset)*0.7
+                       ,replace = F)
+
+predictors <- c("ROJO","VERDE","AZUL","TEMP","HUME","PT100")
+train.data  <-  dataset[sample.index
+                                   ,c(predictors,"AMBIENTE")
+                                   ,drop=F]
+test.data  <-  dataset[-sample.index
+                                  ,c(predictors,"AMBIENTE")
+                                  ,drop=F]
+
+
+```
+
+Para entrenar el modelo, se utiliza la función train con los parámetros de la variable a predecir y los sensores. Se emplea el método KNN y se realiza una normalización min-max como preproceso de datos. Esto permite obtener un modelo entrenado y listo para hacer predicciones precisas.
+
+```{r include=TRUE,echo=T,eval=T,warning=FALSE}
+ctrl <- trainControl(method = "cv",p=0.7) 
+Knnfit <- train(AMBIENTE ~ ROJO+VERDE+AZUL+TEMP+HUME+PT100
+                ,data = train.data
+                ,method = "knn", trControl = ctrl
+                ,preProcess= c("range")
+                ,tuneLength=20)
+```
+
+Una vez que se tiene el modelo, se evalúa su rendimiento utilizando los valores de prueba. Para esto, se utiliza la función predict, a la cual se le pasa el modelo (Knnfit) y los datos de prueba (test.data). Esta función realiza predicciones basadas en el modelo entrenado, utilizando los datos de prueba para evaluar su desempeño y precisión.
+
+```{r include=TRUE,echo=TRUE,eval=T}
+Knnpredict <- predict(Knnfit,newdata = test.data)
+
+```
+
+Para visualizar los resultados, se genera la matriz de confusión. Esta matriz proporciona una representación visual de la precisión de las predicciones del modelo. Permite identificar y analizar la cantidad de clasificaciones correctas e incorrectas realizadas por el modelo en cada clase o categoría. La matriz de confusión es una herramienta útil para evaluar el rendimiento del modelo y determinar posibles áreas de mejora.
+
+```{r include=TRUE,echo=TRUE,eval=TRUE}
+Knnpredict <- predict(Knnfit,newdata = test.data)
+heatmap(confusionMatrix(Knnpredict,test.data$AMBIENTE))
+```

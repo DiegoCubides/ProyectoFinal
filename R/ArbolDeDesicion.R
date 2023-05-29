@@ -1,6 +1,7 @@
 library(tidyverse)#manipulacion y visualizacion de los datos
 library(caret)#manipulacion y visualizacion de los datos, entrana modelos automatico
-
+library(randomForest)
+library(rpart)
 
 
 folder <-  dirname(rstudioapi::getSourceEditorContext()$path )
@@ -13,7 +14,7 @@ dataset <-read_csv(paste0(folder,"/Dataset_ambiente.csv"))#Lee el archivo de dat
 datasetcopia <-read_csv(paste0(folder,"/Dataset_ambiente2.csv"))#Lee el archivo de datos "Dataset_ambiente2.csv" utilizando la función, almacena opjeto ata objeto datacopia
 
 
-fit <- rpart(AMBIENTE ~ ROJO+VE RDE+AZUL+TEMP+HUME+PT100#Ajusta un modelo de árbol de decisión utilizando la función rpart. El modelo predice la variable "AMBIENTE" utilizando las variables predictoras "ROJO", "VERDE", "AZUL", "TEMP", "HUME" y "PT100". Se especifica el método de clasificación y los datos de entrenamiento.
+fit <- rpart(AMBIENTE ~ ROJO+VERDE+AZUL+TEMP+HUME+PT100#Ajusta un modelo de árbol de decisión utilizando la función rpart. El modelo predice la variable "AMBIENTE" utilizando las variables predictoras "ROJO", "VERDE", "AZUL", "TEMP", "HUME" y "PT100". Se especifica el método de clasificación y los datos de entrenamiento.
              ,method = "class"
              ,data=dataset)
 plot(fit, uniform = T, margin = 0.10)#Genera un gráfico del árbol de decisión ajustado utilizando la función plot. Se especifica uniform = TRUE para que los nodos del árbol tengan la misma altura y margin = 0.10 para agregar un margen adicional alrededor del árbol.
