@@ -4,14 +4,9 @@ library(randomForest)
 library(rpart)
 
 
-folder <-  dirname(rstudioapi::getSourceEditorContext()$path )
-dataset <-read_csv(paste0(folder,"/Dataset_ambiente.csv"))
-datasetcopia <-read_csv(paste0(folder,"/Dataset_ambiente_prueba.csv"))
-
-
 folder <-  dirname(rstudioapi::getSourceEditorContext()$path )#Obtiene la ruta de la carpeta en la que se encuentra el archivo de código fuente
 dataset <-read_csv(paste0(folder,"/Dataset_ambiente.csv"))#Lee el archivo de datos "Dataset_ambiente.csv" utilizando la función read_csv
-datasetcopia <-read_csv(paste0(folder,"/Dataset_ambiente2.csv"))#Lee el archivo de datos "Dataset_ambiente2.csv" utilizando la función, almacena opjeto ata objeto datacopia
+datasetcopia <-read_csv(paste0(folder,"/Dataset_ambiente_prueba.csv"))#Lee el archivo de datos "Dataset_ambiente_prueba.csv" utilizando la función, almacena objeto hasta objeto datacopia
 
 
 fit <- rpart(AMBIENTE ~ ROJO+VERDE+AZUL+TEMP+HUME+PT100#Ajusta un modelo de árbol de decisión utilizando la función rpart. El modelo predice la variable "AMBIENTE" utilizando las variables predictoras "ROJO", "VERDE", "AZUL", "TEMP", "HUME" y "PT100". Se especifica el método de clasificación y los datos de entrenamiento.
