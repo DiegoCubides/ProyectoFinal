@@ -23,7 +23,7 @@ datos$PT100 <- as.numeric(as.character(datos$PT100))  # Convertir a numérico la
 datos_entrenamiento <- sample_frac(datos, .7)
 datos_prueba <- setdiff(datos, datos_entrenamiento)
 
-fit <- rpart(formula = AMBIENTE ~ ., data = datos_entrenamiento)
+fit <- rpart(formula = AMBIENTE ~ ROJO + VERDE + AZUL, data = datos_entrenamiento)
 
 fit <- rpart(
   AMBIENTE~ROJO + VERDE + AZUL,
