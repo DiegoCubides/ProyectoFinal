@@ -1,6 +1,6 @@
 ---
 title: "“Supervised learning final project” "
-author: "Diego Cubides,Larry castro, Tomas Mendez"
+author: "Diego Cubides,Larry castro, Tomas Mendez, Jerson Avila"
 date: "`r Sys.Date()`"
 output: pdf_document
 ---
@@ -11,6 +11,8 @@ library(tidyverse)
 library(caret)
 library(knitr)
 library(randomForest)
+library(rpart)
+
 folder <-  dirname(rstudioapi::getSourceEditorContext()$path )
 dataset <-read_csv(paste0(folder,"/Dataset_ambiente.csv"))
 datasetcopia <-read_csv(paste0(folder,"/Dataset_ambiente_prueba.csv"))
@@ -174,5 +176,40 @@ Para visualizar los resultados, se genera la matriz de confusión. Esta matriz p
 
 ```{r include=TRUE,echo=TRUE,eval=TRUE}
 Knnpredict <- predict(Knnfit,newdata = test.data)
-heatmap(confusionMatrix(Knnpredict,test.data$AMBIENTE))
+confusionMatrix(Knnpredict,test.data$AMBIENTE)
+```
+
+### ARBOL DE DESICION
+Se ajusta un modelo de árbol de decisión utilizando la función rpart. El modelo predice la variable   "AMBIENTE" utilizando las variables predictoras "ROJO", "VERDE", "AZUL", "TEMPERATURA", "HUMEDAD" y "PT100". Se  especifica el método de clasificación y los datos de entrenamiento.
+```{r include=TRUE,echo=TRUE,eval=T}
+fit  <-  rpart(AMBIENTE ~ ROJO+VERDE+AZUL+TEMP+HUME+PT100 
+             ,method = "class"
+             ,data=dataset)
+```
+
+Se grafica el ARBOL DE DECISIONES:
+
+```{r include=TRUE,echo=TRUE,eval=T}
+plot (fit, uniform = T, margin = 0.10)
+text(fit,use.n = T,all = T, Cex=0.8)
+rpart.plot::rpart.plot(fit)
+fit$cptable
+treepredict <- predict(fit,newdata = datasetcopia)
+```
+
+
+###RANDOMFOREST
+
+Se eliminan las filas con valores faltantes en todos los datos, se prosigue con un muestreo aleatorio en el 70% de las filas de los datos de entrenamiento. Se ajusta el modelo RandomForest con las variables predictoras y la columna AMBIENTE en el conjunto de datos de entrenamiento para realizar predicciones en el conjunto de datos de prueba utilizando el modelo ajustado.
+
+```{rinclude=TRUE,echo=TRUE,eval=T}
+dataset.complete <- dataset[complete.cases(dataset),]
+data.samples <- sample(1:nrow(dataset),  
+                       nrow(dataset)*0.7, replace = FALSE)
+training.data <- dataset[data.samples, ]
+test.data <- dataset[-data.samples, ]   
+fit.rf <- randomForest(AMBIENTE ~ ROJO  +VERDE + AZUL + TEMP + HUME +
+                         PT100, data = training.data)
+prediction.rf <- predict(fit.rf, datasetcopia)
+table(datasetcopia$AMBIENTE,prediction.rf)
 ```
