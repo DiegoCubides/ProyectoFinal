@@ -174,5 +174,5 @@ Para visualizar los resultados, se genera la matriz de confusión. Esta matriz p
 
 ```{r include=TRUE,echo=TRUE,eval=TRUE}
 Knnpredict <- predict(Knnfit,newdata = test.data)
-heatmap(confusionMatrix(Knnpredict,test.data$AMBIENTE))
+confusionMatrix(Knnpredict,test.data$AMBIENTE)
 ```
