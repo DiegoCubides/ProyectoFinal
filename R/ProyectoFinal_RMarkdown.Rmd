@@ -134,7 +134,7 @@ plot(dataset[1:5]
      ,pch=21,bg=c("green","blue3","yellow")[unclass(dataset$AMBIENTE)])
 ```
 
--   Knn method
+### Knn method
 
 Se utiliza Cross-Validation para dividir los datos en un 70% de entrenamiento y un 30% de prueba. Las variables predictoras incluyen los datos del sensor de color (ROJO, VERDE, AZUL) y los sensores de humedad y temperatura. Esto permite evaluar el rendimiento del modelo en datos no vistos y predecir diferentes ambientes.
 
@@ -190,28 +190,71 @@ fit  <-  rpart(AMBIENTE ~ ROJO+VERDE+AZUL+TEMP+HUME+PT100
 
 Se grafica el ARBOL DE DECISIONES:
 
-```{r include=TRUE,echo=TRUE,eval=T}
-plot (fit, uniform = T, margin = 0.10)
-text(fit,use.n = T,all = T, Cex=0.8)
+```{r include=TRUE,echo=TRUE,eval=T,warning=F}
 rpart.plot::rpart.plot(fit)
-fit$cptable
-treepredict <- predict(fit,newdata = datasetcopia)
+
+```
+Luego se puede ver que el arbol tiene 3 ramas con las cuales el Xerror va disminuyendo
+```{r include=TRUE,echo=TRUE,eval=T,warning=F}
+kable(fit$cptable)
+
 ```
 
+```{r include=TRUE,echo=TRUE,eval=T,warning=F}
+treepredict <- predict(fit,newdata = datasetcopia)
+kable(treepredict)
+```
 
-###RANDOMFOREST
+### RANDOMFOREST
 
-Se eliminan las filas con valores faltantes en todos los datos, se prosigue con un muestreo aleatorio en el 70% de las filas de los datos de entrenamiento. Se ajusta el modelo RandomForest con las variables predictoras y la columna AMBIENTE en el conjunto de datos de entrenamiento para realizar predicciones en el conjunto de datos de prueba utilizando el modelo ajustado.
+Con el propósito de obtener un modelo sólido, se realiza nuevamente el proceso de validación cruzada durante el entrenamiento. En este caso, se divide el conjunto de datos en un 70% para entrenamiento y un 30% para prueba de manera aleatoria. Esta técnica de división aleatoria del dataset busca proporcionar una representación adecuada de los datos en ambas partes, asegurando así la calidad y robustez del modelo obtenido.
 
-```{rinclude=TRUE,echo=TRUE,eval=T}
-dataset.complete <- dataset[complete.cases(dataset),]
+```{r include=TRUE,echo=TRUE,eval=T}
 data.samples <- sample(1:nrow(dataset),  
                        nrow(dataset)*0.7, replace = FALSE)
 training.data <- dataset[data.samples, ]
 test.data <- dataset[-data.samples, ]   
+
+
+```
+Se emplea la función randomForest para entrenar el modelo utilizando nuestras variables predictoras. A continuación, se utiliza el conjunto de datos de prueba (test data) para realizar predicciones. Posteriormente, se genera una tabla que muestra los datos predichos obtenidos por el modelo. Esta tabla proporciona una representación visual de las predicciones realizadas y facilita la comparación con los valores reales.
+```{r}
 fit.rf <- randomForest(AMBIENTE ~ ROJO  +VERDE + AZUL + TEMP + HUME +
                          PT100, data = training.data)
-prediction.rf <- predict(fit.rf, datasetcopia)
-table(datasetcopia$AMBIENTE,prediction.rf)
->>>>>>> d42074d7d861cf442320184b253e80a59d2bf6f1
+prediction.rf <- predict(fit.rf, test.data)
+kable(table(test.data$AMBIENTE,prediction.rf))
 ```
+
+## Prueba de los modelos 
+
+Para realizar pruebas de rendimiento en todos los modelos, se recopilan nuevamente datos de los tres ambientes. Estos datos se utilizan para evaluar la precisión de cada modelo en términos de su capacidad para clasificar correctamente los diferentes ambientes. Mediante la comparación de las predicciones realizadas por los modelos con los valores reales de los ambientes, se puede determinar la precisión y eficacia de cada modelo en la tarea de clasificación. Este proceso de prueba y evaluación permite obtener una medida objetiva del desempeño de los modelos y facilita la selección del modelo más adecuado para la tarea en cuestión.
+
+### Knn 
+
+```{r include=TRUE,echo=TRUE,eval=T,warning=F}
+Knnpredict <- predict(Knnfit,newdata =datasetcopia)
+confusionMatrix(Knnpredict,datasetcopia$AMBIENTE)
+```
+El modelo muestra una alta precisión y especificidad, con solo un error en los nuevos datos.
+
+### ARBOL DE DESICION
+```{r}
+treepredict <- predict(fit,newdata = datasetcopia)
+kable(treepredict)
+```
+
+En este caso, el modelo presenta un alto nivel de precisión al identificar correctamente el ambiente tropical. Sin embargo, al clasificar el ambiente invernal, muestra una buena sensibilidad pero una especificidad menos óptima, lo que resulta en cierta confusión entre el ambiente invernal y el desierto.
+
+### Random Forest
+
+```{r}
+prediction.rf <- predict(fit.rf, datasetcopia)
+kable(table(datasetcopia$AMBIENTE,prediction.rf))
+```
+Para este modelo se tiene una mejor respuesta ya que solo se hizo una prediccion mal de los nuevos datos.
+
+## Conclusiones 
+
+- El proyecto ha logrado implementar de manera exitosa un robot controlado por Bluetooth que captura datos de sensores en tiempo real y los envía a un archivo de Excel. Esta integración permite la adquisición eficiente y confiable de datos para su posterior análisis y procesamiento.
+
+- Los resultados obtenidos mediante el uso de aprendizaje de máquina muestran que los tres modelos implementados en el proyecto han tenido una respuesta favorable. Aunque no se alcanzó una precisión perfecta, se ha demostrado que los modelos son capaces de realizar predicciones con un buen nivel de acierto.
