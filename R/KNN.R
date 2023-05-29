@@ -5,12 +5,6 @@ normalise <- function(x){
   return((x-min(x))/(max(x)-min(x)))
 }
 
-folder <-  dirname(rstudioapi::getSourceEditorContext()$path )
-dataset <-read_csv(paste0(folder,"/Dataset_ambiente.csv"))
-datasetcopia <-read_csv(paste0(folder,"/Dataset_ambiente_prueba.csv"))
-
-brary(tidyverse)#paquetes útiles para el análisis y manipulación de datos
-library(caret)#paquetes útiles para el análisis y manipulación de datos
 
 folder <-  dirname(rstudioapi::getSourceEditorContext()$path )#Se guarda la ruta de la carpeta que contiene el archivo de código actual en la variable
 dataset <-read_csv(paste0(folder,"/Dataset_ambiente.csv"))#Se leen dos conjuntos de datos desde archivos CSV utilizando la función read_csv() d
